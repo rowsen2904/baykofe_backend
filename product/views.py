@@ -6,9 +6,34 @@ from .models import Product
 from .serializers import ProductSerializer
 
 
-""" Getting products by category id """
 class ProductCategoryList(APIView):
+    """ Getting products by category id """
+
     def get(self, request, pk, format=None):
-        products = Product.objects.filter(category_id = pk)
-        serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
+        datas = []
+        products = Product.objects.filter(category_id=pk)
+
+        for x in products:
+            data = {
+                "id": x.id,
+                "name": x.name,
+                "price": x.price,
+                "ready_time": x.ready_time,
+                "img": x.image_url,
+            }
+            datas.append(data)
+
+        return Response(datas)
+
+
+class ProductDescription(APIView):
+    """ Getting product description """
+
+    def get(self, request, pk, format=None):
+        product = Product.objects.get(id=pk)
+        data = {
+            "id": product.id,
+            "description": product.description
+        }
+        
+        return Response(data)
